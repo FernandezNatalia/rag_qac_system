@@ -1,0 +1,22 @@
+test_questions = [
+    "¿Qué es el modelo de regresión lineal simple y cuál es su ecuación general?",
+    "¿Qué representa el coeficiente beta uno (β₁) en una regresión lineal simple?",
+    "¿Cómo se estiman los coeficientes de una regresión lineal simple mediante mínimos cuadrados?",
+    "¿Qué supuestos se hacen sobre el término de error en la regresión lineal?",
+    "¿Qué mide el error estándar asociado a un coeficiente estimado en el modelo lineal?",
+    "¿Cómo se interpreta un intervalo de confianza del 95% para un coeficiente de regresión?",
+    "¿Cuál es la diferencia entre R² y R² ajustado en un modelo de regresión múltiple?",
+    "¿Qué problema introduce la multicolinealidad y cómo afecta la interpretación de los coeficientes?",
+    "¿Cómo se incluyen predictores cualitativos dentro de un modelo de regresión lineal?",
+    "¿Qué es un término de interacción y cuándo conviene incluirlo en un modelo lineal?",
+    "¿Qué son las transformaciones no lineales de predictores y por qué pueden ser útiles?",
+    "¿Qué problemas pueden aparecer al cumplir incorrectamente los supuestos del modelo lineal?",
+    "¿Por qué no es adecuada la regresión lineal para resolver problemas de clasificación binaria?",
+    "¿Cuál es la forma funcional del modelo de regresión logística?",
+    "¿Qué significa interpretar un coeficiente en un modelo logístico en términos de odds ratio?",
+    "¿En qué se diferencian LDA y QDA en términos de supuestos sobre la varianza?",
+    "¿Qué es el clasificador de Naive Bayes y qué independencia asume?",
+    "¿Cómo funciona el método de k-vecinos más cercanos (KNN) para clasificación?",
+    "¿Qué es la validación cruzada k-fold y para qué se utiliza?",
+    "¿Qué es el método bootstrap y qué tipo de estimaciones permite obtener?"
+]
