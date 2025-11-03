@@ -1,0 +1,15 @@
+api/venv
+test
+api/graphs/rag/nodes/__pycache__
+api/graphs/prompts/__pycache__
+api/graphs/rag/__pycache__/
+api/app/__pycache__/
+api/data/processed/
+api/graphs/nodes/__pycache__/
+api/db/__pycache__/
+api/graphs/__pycache__/
+api/evaluation/__pycache__/
+api/vector_store/
+api/db/chat_history.sqlite
+api/evaluation/test_client/__pycache__/
+api/evaluation/plots/
