@@ -27,7 +27,7 @@ Pregunta reescrita: {rewritten}
 {history_block}
 Nota para el asistente:
 Si el historial indica que el usuario está respondiendo a una pregunta previa del asistente
-(ej: "sí", "dale", "ok", "mostrame", "continuá"), debes interpretar la consulta como
+(ej: "sí", "dale", "ok", "mostrame", "continuá", etc), debes interpretar la consulta como
 una continuación del hilo anterior, no como una nueva pregunta independiente.
 
 Contexto del libro (fragmentos recuperados):
