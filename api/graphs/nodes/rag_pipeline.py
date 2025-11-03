@@ -36,10 +36,16 @@ def _format_prompt(question, rewritten, docs, history_summary):
 
 def rag_pipeline_node(state):
     vs = get_vectorstore()
-    retriever = vs.as_retriever(search_kwargs={"k": TOP_K})
+    retriever = vs.as_retriever(
+        search_type="similarity_score_threshold",
+        search_kwargs={"k": TOP_K, "score_threshold": 0.25},
+    )
 
     rewritten = state.get("question_rewritten") or state["question"]
     docs = retriever.invoke(rewritten)
+
+    if not docs:
+        docs = vs.similarity_search(rewritten, k=2)
 
     prompt = _format_prompt(
         question=state["question"],
@@ -65,5 +71,6 @@ def rag_pipeline_node(state):
 
     return {
         "answer": answer,
-        "sources": sources
+        "sources": sources,
+        "docs": docs,
     }
