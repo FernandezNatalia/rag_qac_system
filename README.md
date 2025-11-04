@@ -49,21 +49,6 @@ flowchart TD
     G --> H[END]
 ```
 
-### Persistencia de historial
-La app usa una base SQLite que una vez creada se ubicará automáticamente en:
-
-```
-db/chat_history.sqlite
-```
-
-Se almacenan:
-| Tabla              | Contenido                                        |
-| ------------------ | ------------------------------------------------ |
-| `chat_history`     | Mensajes usuario/assistant con orden y timestamp |
-| `session_summary`  | Resumen comprimido del historial                 |
-| `rag_answers_meta` | Fuentes y contexto usado por el pipeline RAG     |
-| `rag_evals`        | Evaluaciones automáticas tipo RAGAS              |
-
 
 ### Instalación
 
@@ -138,3 +123,24 @@ Response
   "history_used": false
 }
 ```
+
+
+### Persistencia de historial
+La app usa una base SQLite que una vez creada se ubicará automáticamente en:
+
+```
+db/chat_history.sqlite
+```
+
+Se almacenan:
+| Tabla              | Contenido                                        |
+| ------------------ | ------------------------------------------------ |
+| `chat_history`     | Mensajes usuario/assistant con orden y timestamp |
+| `session_summary`  | Resumen comprimido del historial                 |
+| `rag_answers_meta` | Fuentes y contexto usado por el pipeline RAG     |
+| `rag_evals`        | Evaluaciones automáticas tipo RAGAS              |
+
+### Arquitectura del Sistema
+
+El siguiente diagrama muestra la arquitectura completa del proyecto:
+<img width="600" height="600" alt="arq_img" src="https://github.com/user-attachments/assets/bec12348-cb80-48cf-a19a-a7e9ccb56b88" />
