@@ -49,62 +49,6 @@ flowchart TD
     G --> H[END]
 ```
 
-
-### Requisitos previos
-
-- Python 3.10 o superior y `pip`
-- Cuenta en OpenAI con una API Key válida
-- (Opcional) Docker 24+ y Docker Compose si preferís la ejecución containerizada
-
-### Puesta en marcha desde cero
-
-1. **Cloná el repositorio y creá un entorno virtual (opcional pero recomendado)**
-   ```bash
-   git clone <repo>
-   cd rag_qac_system
-   python -m venv .venv
-   source .venv/bin/activate  # En Windows: .venv\Scripts\activate
-   ```
-
-2. **Instalá las dependencias**
-   ```bash
-   pip install -r api/requirements.txt
-   ```
-
-3. **Configurá tus credenciales**
-   - Copiá el archivo `.env` en la raíz del proyecto (o crealo) con tu clave de OpenAI:
-     ```bash
-     echo "OPENAI_API_KEY=tu_api_key" > .env
-     ```
-   - Los servicios cargan automáticamente este archivo al iniciar (ver `load_dotenv()` en `api/app/server.py`). Si la variable falta, la aplicación arrojará un error.
-
-4. **Prepará la base de conocimiento** *(solo es necesario la primera vez o cuando cambies la fuente)*
-   - Asegurate de que el PDF a indexar exista en `api/data/raw/`. Por defecto el proyecto incluye `PDF-GenAI-Challenge.pdf`.
-   - Ejecutá los scripts en este orden:
-     ```bash
-     python api/scripts/preprocess.py \
-       --input_pdf api/data/raw/PDF-GenAI-Challenge.pdf \
-       --output_json api/data/processed/clean_chunks.json
-
-     python api/scripts/build_vectorstore.py \
-       --input api/data/processed/clean_chunks.json \
-       --output api/vector_store
-     ```
-   - `preprocess.py` limpia el PDF y genera chunks enriquecidos con metadatos.
-   - `build_vectorstore.py` crea el índice FAISS que usará el flujo RAG. Si cambiás el PDF, volvé a ejecutar ambos comandos.
-
-5. **Iniciá la API**
-   - **Modo local**
-     ```bash
-     uvicorn api.app.server:app --reload --host 0.0.0.0 --port 8000
-     ```
-   - **Modo Docker Compose**
-     ```bash
-     docker compose up --build
-     ```
-
-   La API quedará disponible en `http://localhost:8000` y la documentación interactiva en `http://localhost:8000/docs`. El endpoint `/health` devuelve un estado simple para verificar que el servicio esté listo.
-
 ### Uso de la API
 #### POST /chat
 Envía una pregunta con un session_id y recibe respuesta con fuentes y metadatos.
@@ -165,3 +109,60 @@ Se almacenan:
 
 El siguiente diagrama muestra la arquitectura completa del proyecto:
 <img width="600" height="600" alt="arq_img" src="https://github.com/user-attachments/assets/bec12348-cb80-48cf-a19a-a7e9ccb56b88" />
+
+
+### Requisitos previos
+
+- Python 3.10 o superior y `pip`
+- Cuenta en OpenAI con una API Key válida
+- (Opcional) Docker 24+ y Docker Compose si preferís la ejecución containerizada
+
+### Puesta en marcha desde cero
+
+1. **Cloná el repositorio y creá un entorno virtual (opcional pero recomendado)**
+   ```bash
+   git clone <repo>
+   cd rag_qac_system
+   python -m venv .venv
+   source .venv/bin/activate  # En Windows: .venv\Scripts\activate
+   ```
+
+2. **Instalá las dependencias**
+   ```bash
+   pip install -r api/requirements.txt
+   ```
+
+3. **Configurá tus credenciales**
+   - Copiá el archivo `.env` en la raíz del proyecto (o crealo) con tu clave de OpenAI:
+     ```bash
+     echo "OPENAI_API_KEY=tu_api_key" > .env
+     ```
+   - Los servicios cargan automáticamente este archivo al iniciar (ver `load_dotenv()` en `api/app/server.py`). Si la variable falta, la aplicación arrojará un error.
+
+4. **Prepará la base de conocimiento** *(solo es necesario la primera vez o cuando cambies la fuente)*
+   - Asegurate de que el PDF a indexar exista en `api/data/raw/`. Por defecto el proyecto incluye `PDF-GenAI-Challenge.pdf`.
+   - Ejecutá los scripts en este orden:
+     ```bash
+     python api/scripts/preprocess.py \
+       --input_pdf api/data/raw/PDF-GenAI-Challenge.pdf \
+       --output_json api/data/processed/clean_chunks.json
+
+     python api/scripts/build_vectorstore.py \
+       --input api/data/processed/clean_chunks.json \
+       --output api/vector_store
+     ```
+   - `preprocess.py` limpia el PDF y genera chunks enriquecidos con metadatos.
+   - `build_vectorstore.py` crea el índice FAISS que usará el flujo RAG. Si cambiás el PDF, volvé a ejecutar ambos comandos.
+
+5. **Iniciá la API**
+   - **Modo local**
+     ```bash
+     uvicorn api.app.server:app --reload --host 0.0.0.0 --port 8000
+     ```
+   - **Modo Docker Compose**
+     ```bash
+     docker compose up --build
+     ```
+
+   La API quedará disponible en `http://localhost:8000` y la documentación interactiva en `http://localhost:8000/docs`. El endpoint `/health` devuelve un estado simple para verificar que el servicio esté listo.
+
