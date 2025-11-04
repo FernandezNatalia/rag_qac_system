@@ -110,14 +110,9 @@ Se almacenan:
 El siguiente diagrama muestra la arquitectura completa del proyecto:
 <img width="600" height="600" alt="arq_img" src="https://github.com/user-attachments/assets/bec12348-cb80-48cf-a19a-a7e9ccb56b88" />
 
+---
 
-### Requisitos previos
-
-- Python 3.10 o superior y `pip`
-- Cuenta en OpenAI con una API Key válida
-- (Opcional) Docker 24+ y Docker Compose si preferís la ejecución containerizada
-
-### Puesta en marcha desde cero
+## Puesta en marcha desde cero
 
 1. **Cloná el repositorio y creá un entorno virtual (opcional pero recomendado)**
    ```bash
@@ -166,3 +161,31 @@ El siguiente diagrama muestra la arquitectura completa del proyecto:
 
    La API quedará disponible en `http://localhost:8000` y la documentación interactiva en `http://localhost:8000/docs`. El endpoint `/health` devuelve un estado simple para verificar que el servicio esté listo.
 
+---
+
+## Proceso de evaluación del RAG (RAGAS)
+
+La aplicación puede calcular métricas automáticas sobre las respuestas generadas utilizando [Ragas](https://github.com/explodinggradients/ragas). Los datos necesarios se almacenan automáticamente en la tabla `rag_answers_meta` cada vez que el chatbot responde (fuentes, contextos y turno asociado). Para ejecutar la evaluación seguí estos pasos:
+
+1. **Generá respuestas que quieras evaluar**
+   - Interactuá con el endpoint `/chat` o con el grafo de LangServe (`/graph`).
+   - Cada respuesta almacenará su metadata en `rag_answers_meta` y quedará marcada como “pendiente de evaluación”.
+
+2. **Ejecutá el evaluador**
+   - **Modo CLI**: desde la raíz del proyecto corré:
+     ```bash
+     python api/evaluation/run_ragas.py --limit 10        # procesa hasta 10 respuestas
+     python api/evaluation/run_ragas.py --dry-run         # calcula métricas sin guardarlas
+     ```
+     El script imprime los puntajes (`faithfulness`, `context_precision`, `context_recall`, `answer_relevancy`) y los guarda en la tabla `rag_evals`, salvo que se use `--dry-run`.
+   - **Modo API**: podés disparar la evaluación vía HTTP enviando un POST a `/rag/evaluate`:
+     ```bash
+     curl -X POST http://localhost:8000/rag/evaluate \
+       -H "Content-Type: application/json" \
+       -d '{"limit": 5, "dry_run": false}'
+     ```
+     El endpoint devuelve un resumen con la cantidad solicitada, las evaluaciones exitosas y cualquier error.
+
+4. **Revisá los resultados**
+   - Las filas evaluadas pasan a la tabla `rag_evals` con sello de tiempo.
+   - Podés exportarlas con `api/evaluation/export_rag_evals_to_excel.py` o consultar directamente la base `db/chat_history.sqlite`.
