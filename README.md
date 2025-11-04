@@ -49,7 +49,38 @@ flowchart TD
     G --> H[END]
 ```
 
+### Persistencia de historial
+La app usa una base SQLite que una vez creada se ubicará automáticamente en:
+
+```
+db/chat_history.sqlite
+```
+
+Se almacenan:
+| Tabla              | Contenido                                        |
+| ------------------ | ------------------------------------------------ |
+| `chat_history`     | Mensajes usuario/assistant con orden y timestamp |
+| `session_summary`  | Resumen comprimido del historial                 |
+| `rag_answers_meta` | Fuentes y contexto usado por el pipeline RAG     |
+| `rag_evals`        | Evaluaciones automáticas tipo RAGAS              |
+
+
 ### Instalación
+
+#### Inicialización obligatoria antes de usar la API
+
+Antes de levantar el servidor o probar los endpoints, es necesario preparar los datos del sistema RAG.
+Esto se hace una sola vez (a menos que cambie el PDF o quieras regenerar el vectorstore).
+
+Debés ejecutar estos dos scripts en este orden:
+```
+python api/scripts/preprocess.py
+python api/scripts/build_vectorstore.py
+```
+
+- preprocess.py toma el PDF de origen, extrae el texto y lo divide en chunks.
+- build_vectorstore.py convierte esos chunks en embeddings y construye el índice FAISS usado por el chatbot.
+
 #### 1) Ejecución local (sin Docker)
 ```
 git clone <repo>
@@ -107,19 +138,3 @@ Response
   "history_used": false
 }
 ```
-
-### Persistencia de historial
-La app usa una base SQLite que una vez creada se ubicará automáticamente en:
-
-```
-db/chat_history.sqlite
-```
-
-Se almacenan:
-| Tabla              | Contenido                                        |
-| ------------------ | ------------------------------------------------ |
-| `chat_history`     | Mensajes usuario/assistant con orden y timestamp |
-| `session_summary`  | Resumen comprimido del historial                 |
-| `rag_answers_meta` | Fuentes y contexto usado por el pipeline RAG     |
-| `rag_evals`        | Evaluaciones automáticas tipo RAGAS              |
-
