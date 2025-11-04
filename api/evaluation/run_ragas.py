@@ -40,10 +40,18 @@ def build_samples(rows):
 async def run_eval(limit, dry_run):
     rows = fetch_answers_pending_eval(limit=limit)
     if not rows:
-        print("No hay respuestas pendientes de evaluación.")
-        return
+        message = "No hay respuestas pendientes de evaluación."
+        print(message)
+        return {
+            "requested": 0,
+            "evaluated": 0,
+            "dry_run": dry_run,
+            "errors": [],
+            "message": message,
+        }
 
-    print(f"Evaluando {len(rows)} respuestas...")
+    total = len(rows)
+    print(f"Evaluando {total} respuestas...")
 
     evaluator_llm = ChatOpenAI(model=EVALUATOR_MODEL, temperature=0, model_kwargs={
         "response_format": {"type": "json_object"}
@@ -57,12 +65,15 @@ async def run_eval(limit, dry_run):
 
     samples = build_samples(rows)
 
+    evaluated = 0
+    errors = []
+
     for idx, r in enumerate(rows):
 
         print(f"\n--- [{r['session_id']} - turn {r['turn']}] ---")
-        
+
         scores = {}
-        
+
         try:
             scores["faithfulness"] = await faithfulness_metric.single_turn_ascore(samples[idx])
             scores["context_precision"] = await precision_metric.single_turn_ascore(samples[idx])
@@ -80,15 +91,35 @@ async def run_eval(limit, dry_run):
                     context_precision=scores.get("context_precision"),
                     context_recall=scores.get("context_recall")
                 )
-        
+            evaluated += 1
+
         except Exception as e:
-            print(f"Error evaluando sesión {r['session_id']}, turn {r['turn']}: {e}")
+            error_msg = f"Error evaluando sesión {r['session_id']}, turn {r['turn']}: {e}"
+            print(error_msg)
+            errors.append(
+                {
+                    "session_id": r["session_id"],
+                    "turn": r["turn"],
+                    "error": str(e),
+                }
+            )
 
     if dry_run:
         print("\nDRY RUN activado → no se guardaron resultados.")
     else:
         print("\nEvaluaciones guardadas correctamente.")
 
+    return {
+        "requested": total,
+        "evaluated": evaluated,
+        "dry_run": dry_run,
+        "errors": errors,
+        "message": (
+            "DRY RUN activado → no se guardaron resultados."
+            if dry_run
+            else "Evaluaciones guardadas correctamente."
+        ),
+    }
 
 def main():
     parser = argparse.ArgumentParser()
